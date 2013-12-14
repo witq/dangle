@@ -12,17 +12,18 @@
     <body ng-app="app" ng-controller="appCtrl">
 
         <div style="height: 300px; width: 940px">
-            <fs-date-histo
+            <fs-combo
                 bind="data"
-                duration="500"
                 height="300"
                 width="940"
-                ></fs-date-histo>
+                stacks="stacks"
+                ></fs-combo>
         </div>
 
         <pre>{{data|json}}</pre>
 
         <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.min.js"></script>
         <script src="../dist/dangle.min.js"></script>
         <script src="app.js"></script>

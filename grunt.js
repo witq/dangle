@@ -68,6 +68,13 @@ module.exports = function (grunt) {
           'src/modules/date-histo/datehisto.js'
         ],
         dest: 'dist/dangle.datehisto.js'
+      },
+      combo: {
+        src: [
+          '<banner:meta.banner>',
+          'src/modules/combo/combo.js'
+        ],
+        dest: 'dist.dangle.combo.js'
       }
     },
     min: {
@@ -102,6 +109,10 @@ module.exports = function (grunt) {
       datehisto: {
         src: ['<banner:meta.banner>', 'src/modules/date-histo/datehisto.js'],
         dest: 'dist/dangle.datehisto.min.js'
+      },
+      combo: {
+        src: ['<banner:meta.banner>', 'src/modules/date-histo/combo.js'],
+        dest: 'dist/dangle.combo.min.js'
       }
     },
     lint: {

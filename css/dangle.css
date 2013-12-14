@@ -1,16 +1,16 @@
 /* axis line test */
 .axis path { 
     fill: none; 
-    stroke:#000; 
-    stroke-width: 1.5px; 
+    stroke:#333; 
+    stroke-width: 1px; 
     shape-rendering: crispEdges;
 }
 
 /* axis tick marks */
 .axis line {
     fill: none;
-    stroke: #000;
-    stroke-width: 1.1px;
+    stroke: #333;
+    stroke-width: 1px;
     shape-rendering: crispEdges;
 }
 
