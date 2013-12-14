@@ -96,8 +96,8 @@ angular.module('dangle')
 
                 // enable interpolation if specified 
                 if (attrs.interpolate == 'true') {
-                    line.interpolate('cardinal');
-                    area.interpolate('cardinal');
+                    line.interpolate('monotone');
+                    area.interpolate('monotone');
                 }
 
                 // create the root SVG node

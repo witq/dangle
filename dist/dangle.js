@@ -1,4 +1,4 @@
-/*! dangle - v1.0.0 - 2013-03-02
+/*! dangle - v1.0.0 - 2013-12-14
 * http://www.fullscale.co/dangle
 * Copyright (c) 2013 FullScale Labs, LLC; Licensed MIT */
 
@@ -102,8 +102,8 @@ angular.module('dangle')
 
                 // enable interpolation if specified 
                 if (attrs.interpolate == 'true') {
-                    line.interpolate('cardinal');
-                    area.interpolate('cardinal');
+                    line.interpolate('monotone');
+                    area.interpolate('monotone');
                 }
 
                 // create the root SVG node
@@ -215,7 +215,7 @@ angular.module('dangle')
                         t.select('.y').call(yAxis);
 
                     }
-                })
+                }, true)
             }
         };
     }]);
@@ -906,7 +906,15 @@ angular.module('dangle')
                                     });
 
                             // run the transition
-                            path.transition().duration(duration).attrTween('d', arcTween);
+                            path
+                                .style('fill', function(d) { return color(d.data.term); })
+                            .transition()
+                                .duration(duration)
+                                .attrTween('d', arcTween)
+                                .style('fill', function(d) { return color(d.data.term); });
+
+                            // remove arcs not in the dataset
+                            path.exit().remove();
 
                             // update the label ticks
                             var ticks = labels.selectAll('line').data(pieData);

@@ -1,4 +1,4 @@
-/*! dangle - v1.0.0 - 2013-03-02
+/*! dangle - v1.0.0 - 2013-12-14
 * http://www.fullscale.co/dangle
 * Copyright (c) 2013 FullScale Labs, LLC; Licensed MIT */
 
@@ -100,8 +100,8 @@ angular.module('dangle')
 
                 // enable interpolation if specified 
                 if (attrs.interpolate == 'true') {
-                    line.interpolate('cardinal');
-                    area.interpolate('cardinal');
+                    line.interpolate('monotone');
+                    area.interpolate('monotone');
                 }
 
                 // create the root SVG node
@@ -213,7 +213,7 @@ angular.module('dangle')
                         t.select('.y').call(yAxis);
 
                     }
-                })
+                }, true)
             }
         };
     }]);
