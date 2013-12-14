@@ -66,7 +66,7 @@ angular.module('dangle')
                 height = height - margin.top - margin.bottom;
 
                 var x0 = d3.scale.ordinal()
-                    .rangeRoundBands([0, width], 0.1);
+                    .rangeBands([0, width], 0.02);
                  
                 var x1 = d3.scale.ordinal();
                  
@@ -76,11 +76,15 @@ angular.module('dangle')
                 // create x,y axis
                 var xAxis = d3.svg.axis()
                     .scale(x0)
-                    .orient('bottom');
+                    .orient('bottom')
+                    .tickFormat(function(date) {
+                        return new Date(date).getDate();
+                    });
 
                 var yAxis = d3.svg.axis()
                     .scale(y)
-                    .orient('left');
+                    .orient('left')
+                    .tickFormat(d3.format(".2s"));
 
                 var color = d3.scale.ordinal()
                     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c"]);
