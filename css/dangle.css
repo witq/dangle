@@ -1,7 +1,11 @@
+body {
+    background: #333;
+}
+
 /* axis line test */
 .axis path { 
     fill: none; 
-    stroke:#333; 
+    stroke:#fff; 
     stroke-width: 1px; 
     shape-rendering: crispEdges;
 }
@@ -9,14 +13,14 @@
 /* axis tick marks */
 .axis line {
     fill: none;
-    stroke: #333;
+    stroke: #fff;
     stroke-width: 1px;
     shape-rendering: crispEdges;
 }
 
 /* controls the axis text */
 .axis text {
-    fill: #333;
+    fill: #fff;
     stroke: none;
     shape-rendering: crispEdges;
     font-size: 12px;

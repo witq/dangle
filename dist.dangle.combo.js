@@ -67,11 +67,12 @@ angular.module('dangle')
                 // add margin (make room for x,y labels)
                 width = width - margin.left - margin.right;
                 height = height - margin.top - margin.bottom;
-
+                
                 var x0 = d3.scale.ordinal()
                     .rangeRoundBands([0, width], 0.1);
                  
-                var x1 = d3.scale.ordinal();
+                var x1 = d3.scale.ordinal()
+                    .rangeRoundBands([0, width], 0.1);;
                  
                 var y = d3.scale.linear()
                     .range([height, 0]);
@@ -90,13 +91,46 @@ angular.module('dangle')
                     .tickFormat(d3.format(".2s"));
 
                 var color = d3.scale.ordinal()
-                    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c"]);
+                    .range(["#800000", "#bf0000", "#008000", "#00bf00", "#000080", "#0000bf"]);
 
                 // create the root svg node
                 var svg = d3.select(element[0])
                     .append('svg')
                         .append('g')
                             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                // create bars root
+                var barRoot = svg.append('g');
+
+                // create line generator 
+                var line = d3.svg.line()
+                    .x(function(d) { return x0(d.time) + 1.7 * x1.rangeBand() })
+                    .y(function(d) { return y(d.line1); })
+                    .interpolate('monotone');
+
+                // create line generator 
+                var line2 = d3.svg.line()
+                    .x(function(d) { return x0(d.time) + 1.7 * x1.rangeBand() })
+                    .y(function(d) { return y(d.line2); });
+
+                // generate the line. Data is empty at link time
+                svg.insert('path')
+                    .attr('class', 'line1')
+                    .datum([])
+                    .attr("d", line)
+                    .style('fill', 'none')
+                    .style('stroke-width', 2)
+                    .style('stroke', '#fbc900')
+                    .style("stroke-dasharray", ("2, 2"));
+
+                // generate the line. Data is empty at link time
+                svg.insert('path')
+                    .attr('class', 'line2')
+                    .datum([])
+                    .attr("d", line2)
+                    .style('fill', 'none')
+                    .style('stroke-width', 2)
+                    .style('stroke', '#fbc900');
 
                 var yBegin;
 
@@ -127,14 +161,15 @@ angular.module('dangle')
                         // read from data, which columns should be stacked
                         var innerColumns =  data.stacks;
 
-                        // pull the data array from the facet
-                        data = $.extend(true, {}, data);
                         data = data.entries || [];
 
-                        var intervalMsecs = 86400000;
-                        var columnHeaders = d3.keys(data[0]).filter(function(key) { return key !== "time"; });
+                        var columnHeaders = d3.keys(data[0]).filter(function(key) {
+                            return key.indexOf("bar") >= 0;
+                        });
 
-                        color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));
+                        color.domain(d3.keys(data[0]).filter(function(key) {
+                            return key.indexOf("bar") >= 0;
+                        }));
 
                         data.forEach(function(d) {
                             var yColumn = [];
@@ -163,7 +198,7 @@ angular.module('dangle')
                         // clear the existing groups
                         svg.selectAll(".group").data([]).exit().remove();
 
-                        var project_stackedbar = svg.selectAll(".project_stackedbar")
+                        var project_stackedbar = barRoot.selectAll(".project_stackedbar")
                             .data(data)
                                 .enter().append("g")
                                     .attr("class", "group")
@@ -184,7 +219,12 @@ angular.module('dangle')
                                         return y(d.yBegin) - y(d.yEnd); 
                                     })
                                     .style("fill", function(d) { return color(d.name); })
-                                    .style("stroke", "#000");
+                                    .style("stroke", "#000")
+                                    .style("shape-rendering", "crispEdges");
+
+
+                        svg.select('.line1').attr('d', line(data));
+                        svg.select('.line2').attr('d', line2(data));
 
                         // update our x,y axis based on new data values
                         svg.select('.x').call(xAxis);
