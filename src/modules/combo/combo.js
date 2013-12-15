@@ -40,8 +40,7 @@ angular.module('dangle')
                 field:     '@',
                 duration:  '@',
                 delay:     '@',
-                interval:  '@',
-                stacks: '='
+                interval:  '@'
             },
 
             // angular directives return a link fn
@@ -66,7 +65,7 @@ angular.module('dangle')
                 height = height - margin.top - margin.bottom;
 
                 var x0 = d3.scale.ordinal()
-                    .rangeBands([0, width], 0.02);
+                    .rangeRoundBands([0, width], 0.1);
                  
                 var x1 = d3.scale.ordinal();
                  
@@ -97,12 +96,6 @@ angular.module('dangle')
 
                 var yBegin;
 
-                var innerColumns =  {
-                    'column1': ['count1', 'count1a'],
-                    'column2': ['count2', 'count2a'],
-                    'column3': ['count3', 'count3a']    
-                }
-
                 // insert the x axis (no data yet)
                 svg.append('g')
                     .attr('class', 'histo x axis ' + klass)
@@ -112,13 +105,7 @@ angular.module('dangle')
                 // insert the y axis (no data yet)
                 svg.append('g')
                     .attr('class', 'histo y axis ' + klass)
-                    .call(yAxis)
-                        .append('text')
-                            .attr('transform', 'rotate(-90)')
-                            .attr('y', 6)
-                            .attr('dy', '.51em')
-                            .style('text-anchor', 'end')
-                            .text(label);
+                    .call(yAxis);
 
 
                 // mainer observer fn called when scope is updated. Data and scope vars are npw bound
@@ -132,6 +119,9 @@ angular.module('dangle')
 
                     // just because scope is bound doesn't imply we have data
                     if (data) {
+
+                        // read from data, which columns should be stacked
+                        var innerColumns =  data.stacks;
 
                         // pull the data array from the facet
                         data = $.extend(true, {}, data);
@@ -162,24 +152,23 @@ angular.module('dangle')
                         });
 
                         // recalculate the x and y domains based on the new data.
-                        // we have to add our "interval" to the max otherwise 
-                        // we don't have enough room to draw the last bar.
                         x0.domain(data.map(function(d) { return d.time; }));
                         x1.domain(d3.keys(innerColumns)).rangeRoundBands([0, x0.rangeBand()]);
                         y.domain([0, d3.max(data, function(d) { return d.total; })]);
 
-                        // create transition (x,y axis)
-                        var t = svg.transition().duration(duration);
+                        // clear the existing groups
+                        svg.selectAll(".group").data([]).exit().remove();
 
                         var project_stackedbar = svg.selectAll(".project_stackedbar")
                             .data(data)
                                 .enter().append("g")
-                                    .attr("class", "g")
+                                    .attr("class", "group")
                                     .attr("transform", function(d) { return "translate(" + x0(d.time) + ",0)"; });
 
                         project_stackedbar.selectAll("rect")
                             .data(function(d) { return d.columnDetails; })
                                 .enter().append("rect")
+                                    .attr("class", "bar")
                                     .attr("width", x1.rangeBand())
                                     .attr("x", function(d) { 
                                         return x1(d.column);
@@ -190,11 +179,12 @@ angular.module('dangle')
                                     .attr("height", function(d) { 
                                         return y(d.yBegin) - y(d.yEnd); 
                                     })
-                                    .style("fill", function(d) { return color(d.name); });
+                                    .style("fill", function(d) { return color(d.name); })
+                                    .style("stroke", "#000");
 
                         // update our x,y axis based on new data values
-                        t.select('.x').call(xAxis);
-                        t.select('.y').call(yAxis);
+                        svg.select('.x').call(xAxis);
+                        svg.select('.y').call(yAxis);
                     }
                 }, true)
             }
